@@ -1,4 +1,4 @@
-root = true
+git branch -M mainroot = true
 
 [*]
 charset = utf-8

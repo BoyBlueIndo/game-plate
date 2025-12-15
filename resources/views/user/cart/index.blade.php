@@ -7,9 +7,9 @@
 
     <h1 class="mb-4">My Cart</h1>
 
-    <button>
-        <a href="{{ route('user.index') }}" class="btn btn-secondary btn-sm">Back to Store</a>
-    </button>
+    <a href="{{ route('user.index') }}" class="btn btn-secondary btn-sm mb-3">
+        Back to Store
+    </a>
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -29,32 +29,53 @@
                     <tr>
                         <th>Game</th>
                         <th>Price</th>
-                        <th style="width: 120px;">Actions</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th style="width: 120px;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     @php $total = 0; @endphp
 
                     @foreach ($cart as $item)
-                        @php $total += $item->game->price; @endphp
+                        @php
+                            $subtotal = $item->game->price * $item->quantity;
+                            $total += $subtotal;
+                        @endphp
 
                         <tr>
                             <td>{{ $item->game->name }}</td>
-                            <td>Rp {{ number_format($item->game->price, 0, ',', '.') }}</td>
+
+                            <td>
+                                Rp {{ number_format($item->game->price, 0, ',', '.') }}
+                            </td>
+
+                            <td class="text-center">
+                                {{ $item->quantity }}
+                            </td>
+
+                            <td>
+                                Rp {{ number_format($subtotal, 0, ',', '.') }}
+                            </td>
+
                             <td>
                                 <form action="{{ route('user.cart.remove', $item->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-danger btn-sm w-100">Remove</button>
+                                    <button class="btn btn-danger btn-sm w-100">
+                                        Remove
+                                    </button>
                                 </form>
                             </td>
                         </tr>
                     @endforeach
 
-                    <tr class="table-secondary">
-                        <th>Total</th>
-                        <th>Rp {{ number_format($total, 0, ',', '.') }}</th>
-                        <th></th>
+                    <tr class="table-secondary fw-bold">
+                        <td colspan="3" class="text-end">Total</td>
+                        <td>
+                            Rp {{ number_format($total, 0, ',', '.') }}
+                        </td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
@@ -62,7 +83,21 @@
 
         <form method="POST" action="{{ route('user.checkout') }}">
             @csrf
-            <button class="btn btn-success w-100 mt-3">Checkout</button>
+
+            <div class="mb-3">
+                <label class="form-label">Payment Method</label>
+                <select name="payment_method" class="form-select" required>
+                    <option value="">-- Choose Payment Method --</option>
+                    <option value="manual_transfer">Manual Transfer</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="qris">QRIS</option>
+                    <option value="cod">Cash on Delivery</option>
+                </select>
+            </div>
+
+            <button class="btn btn-success w-100">
+                Checkout
+            </button>
         </form>
 
     @endif

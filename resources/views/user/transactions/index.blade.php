@@ -5,42 +5,62 @@
 @section('content')
 <div class="container mt-4">
 
-    <h1 class="mb-4">My Transactions</h1>
-
-    <button>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>My Transactions</h1>
         <a href="{{ route('user.index') }}" class="btn btn-secondary btn-sm">Back to Store</a>
-    </button>
+    </div>
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    @foreach ($transactions as $trx)
-        <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between">
-                <span>Transaction #{{ $trx->id }}</span>
-                <span class="badge 
-                    @if($trx->status == 'pending') bg-warning 
-                    @elseif($trx->status == 'confirmed') bg-success 
-                    @else bg-danger 
-                    @endif">
-                    {{ ucfirst($trx->status) }}
-                </span>
+    @forelse ($transactions as $trx)
+        <div class="card mb-4 shadow-sm">
+
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <strong>Transaction #{{ $trx->id }}</strong>
+
+                <div>
+                    <span class="badge bg-secondary me-2">
+                        {{ strtoupper(str_replace('_', ' ', $trx->payment_method)) }}
+                    </span>
+
+                    <span class="badge 
+                        @if($trx->status === 'pending') bg-warning
+                        @elseif($trx->status === 'confirmed') bg-success
+                        @else bg-danger
+                        @endif">
+                        {{ ucfirst($trx->status) }}
+                    </span>
+                </div>
             </div>
 
-            <div class="card-body">
-                <ul>
-                    @foreach ($trx->items as $item)
-                        <li>{{ $item->game->name }}</li>
-                    @endforeach
-                </ul>
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Game</th>
+                            <th style="width:120px;">Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($trx->items as $item)
+                            <tr>
+                                <td>{{ $item->game->name }}</td>
+                                <td>x{{ $item->quantity }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
 
-            <div class="card-footer text-muted">
-                {{ $trx->created_at }}
+            <div class="card-footer text-muted text-end">
+                {{ $trx->created_at->format('d M Y, H:i') }}
             </div>
         </div>
-    @endforeach
+    @empty
+        <div class="alert alert-info">You have no transactions.</div>
+    @endforelse
 
 </div>
 @endsection

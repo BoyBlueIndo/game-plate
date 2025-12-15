@@ -88,14 +88,21 @@ class GameController extends Controller
             'publisher'   => 'required|string',
             'description' => 'required|string',
             'price'       => 'required|integer|min:0',
+            'stock'       => 'required|integer|min:1',
             'image'       => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
             'game_link'   => 'required|string|url',
             'comments'    => 'nullable|string',
         ]);
 
         $game = new Game($request->only([
-            'name', 'genres_id', 'publisher', 'description',
-            'price', 'game_link', 'comments'
+            'name', 
+            'genres_id', 
+            'publisher', 
+            'description', 
+            'price', 
+            'stock',
+            'game_link', 
+            'comments',
         ]));
 
         if ($request->hasFile('image')) {
@@ -139,13 +146,21 @@ class GameController extends Controller
             'publisher'   => 'required|string',
             'description' => 'required|string',
             'price'       => 'required|integer|min:0',
+            'stock'       => 'required|integer|min:0',
             'image'       => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
             'game_link'   => 'required|string|url',
             'comments'    => 'nullable|string',
         ]);
 
         $game->fill($request->only([
-            'name', 'genres_id', 'publisher', 'description', 'price', 'game_link', 'comments'
+            'name', 
+            'genres_id', 
+            'publisher', 
+            'description', 
+            'price',
+            'stock',
+            'game_link',
+            'comments'
         ]));
 
         if ($request->hasFile('image')) {
@@ -160,6 +175,10 @@ class GameController extends Controller
     public function destroy(string $id)
     {
         $game = Game::findOrFail($id);
+
+        if ($game->stock > 0) {
+            return back()->with('error', 'Game cannot be deleted while stock is available.');
+        }
 
         if ($game->image) Storage::disk('public')->delete($game->image);
 

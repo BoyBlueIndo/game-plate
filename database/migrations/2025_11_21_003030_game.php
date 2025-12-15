@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->longText('description');
             $table->string('price')->default('0');
+            $table->integer('stock')->default('1');
             $table->string('image')->nullable();
             $table->string('game_link')->nullable();
             $table->text('comments')->nullable();

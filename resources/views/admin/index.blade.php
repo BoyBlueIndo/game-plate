@@ -36,6 +36,7 @@
                     <th>Publisher</th>
                     <th>Description</th>
                     <th>Price</th>
+                    <th>Stocks</th>
                     <th>Game Link</th>
                     <th>Actions</th>
                 </tr>
@@ -55,6 +56,8 @@
                     <td>{{ $game->publisher }}</td>
                     <td style="max-width:250px">{{ $game->description }}</td>
                     <td>Rp {{ number_format($game->price, 0, ',', '.') }}</td>
+
+                    <td>{{ $game->stock }}</td>
 
                     <td>
                         @if ($game->game_link)

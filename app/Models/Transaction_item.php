@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction_item extends Model
 {
-    protected $fillable = ['transaction_id', 'game_id'];
+    protected $fillable = [
+        'transaction_id', 
+        'game_id',
+        'quantity'
+    ];
 
     public function transaction() {
         return $this->belongsTo(Transaction::class);

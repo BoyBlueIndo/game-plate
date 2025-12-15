@@ -62,9 +62,17 @@
                                 Rp {{ number_format($game->price, 0, ',', '.') }}
                             </h5>
 
-                            <a href="{{ route('user.cart.add', $game->id) }}" class="btn btn-primary w-100">
-                                Add to Cart
-                            </a>
+                            <p class="text-muted">
+                                Stock: {{ $game->stock }}
+                            </p>
+
+                            @if ($game->availableStock() > 0)
+                                <a href="{{ route('user.cart.add', $game->id) }}" class="btn btn-primary w-100">
+                                    Add to Cart
+                                </a>
+                            @else
+                                <span class="badge bg-danger">Out of Stock</span>
+                            @endif
                         </div>
 
                     </div>
